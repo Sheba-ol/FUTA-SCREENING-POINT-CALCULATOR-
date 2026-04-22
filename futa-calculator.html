@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FUTA Screening Point Calculator by SHEBA</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #006B3F;
+    --green-light: #00A05A;
+    --green-pale: #e8f5ee;
+    --gold: #D4A017;
+    --gold-light: #f5d978;
+    --dark: #0a1a0f;
+    --mid: #1a3325;
+    --text: #0d2118;
+    --muted: #5a7a6a;
+    --white: #ffffff;
+    --surface: #f4faf7;
+    --border: #c0ddd0;
+    --red: #c0392b;
+    --orange: #e67e22;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 50% at 10% 20%, rgba(0,107,63,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 80%, rgba(212,160,23,0.15) 0%, transparent 55%),
+      linear-gradient(160deg, #0a1a0f 0%, #0f2518 50%, #0a1a0f 100%);
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,107,63,0.04) 40px, rgba(0,107,63,0.04) 41px),
+      repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,107,63,0.04) 40px, rgba(0,107,63,0.04) 41px);
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+  }
+
+  /* WHATSAPP BANNER TOP */
+  .wa-banner {
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    text-align: center;
+    padding: 14px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+  }
+
+  .wa-banner p {
+    color: white;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .wa-banner a {
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-top: 4px;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+  }
+
+  .wa-banner a:hover { background: rgba(255,255,255,0.35); }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 48px 0 32px;
+    animation: fadeDown 0.7s ease both;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .header-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold) 0%, #f0c040 100%);
+    color: var(--dark);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 16px rgba(212,160,23,0.4);
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+
+  .header h1 span {
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-sub {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.88rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* CONTACT */
+  .contact-bar {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 14px 0 0;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .contact-item svg { flex-shrink: 0; }
+
+  /* CARD */
+  .card {
+    background: rgba(255,255,255,0.96);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,107,63,0.15);
+    animation: fadeUp 0.6s ease both;
+    margin-bottom: 24px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, var(--green) 0%, var(--mid) 100%);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .card-header-icon {
+    width: 42px; height: 42px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+
+  .card-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .card-header p {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.65);
+    margin-top: 2px;
+  }
+
+  .card-body { padding: 28px; }
+
+  /* UTME */
+  .utme-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 22px;
+    transition: border-color 0.2s;
+  }
+
+  .utme-row:focus-within { border-color: var(--green-light); }
+
+  .utme-row label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .utme-row input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: 'Space Mono', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--green);
+    outline: none;
+    text-align: right;
+    width: 100%;
+  }
+
+  .utme-row input::placeholder { color: #ccc; font-size: 1.2rem; }
+
+  .utme-max {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    margin-top: 7px;
+    text-align: right;
+  }
+
+  /* OLEVEL GRID */
+  .olevel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+
+  .subject-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .subject-card:focus-within {
+    border-color: var(--green-light);
+    box-shadow: 0 0 0 4px rgba(0,160,90,0.1);
+  }
+
+  .subject-card label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .subject-card select {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    outline: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a7a6a' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    padding-right: 20px;
+  }
+
+  .grade-pill {
+    display: inline-block;
+    margin-top: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 100px;
+    background: var(--green-pale);
+    color: var(--green);
+    transition: all 0.3s;
+  }
+
+  .grade-pill.a1 { background: #d4f5e4; color: #006B3F; }
+  .grade-pill.b2 { background: #dff2ec; color: #007a50; }
+  .grade-pill.b3 { background: #e5f2ed; color: #1a7a55; }
+  .grade-pill.c4 { background: #fef9e4; color: #a07800; }
+  .grade-pill.c5 { background: #fef2d7; color: #b06000; }
+  .grade-pill.c6 { background: #fdebd7; color: #b04000; }
+  .grade-pill.fail { background: #fde9e8; color: #c0392b; }
+
+  /* WARNING */
+  .warning-box {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa0);
+    border: 2px solid #f0c040;
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-top: 16px;
+  }
+
+  .warning-box p { font-size: 0.8rem; color: #6b4c00; line-height: 1.5; }
+  .warning-box strong { font-weight: 700; }
+
+  /* CALCULATE BUTTON */
+  .calc-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+    box-shadow: 0 8px 24px rgba(0,107,63,0.4);
+    margin-top: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .calc-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .calc-btn:hover::before { opacity: 1; }
+  .calc-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,107,63,0.5); }
+  .calc-btn:active { transform: translateY(0); }
+
+  /* RESULT SECTION */
+  .result-section {
+    display: none;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .result-section.visible { display: block; }
+
+  /* SCORE DISPLAY */
+  .score-display {
+    background: linear-gradient(135deg, var(--green) 0%, #004d2d 100%);
+    border-radius: 20px;
+    padding: 36px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .score-display::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(212,160,23,0.2), transparent 70%);
+    border-radius: 50%;
+  }
+
+  .score-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 8px;
+  }
+
+  .score-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: var(--gold-light);
+    line-height: 1;
+    margin-bottom: 4px;
+    text-shadow: 0 4px 20px rgba(212,160,23,0.4);
+  }
+
+  .score-percent {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.6);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .score-breakdown {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .breakdown-item {
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: left;
+  }
+
+  .breakdown-item .b-label {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+
+  .breakdown-item .b-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    margin-top: 4px;
+  }
+
+  /* INELIGIBLE */
+  .ineligible-box {
+    background: linear-gradient(135deg, #fde8e8, #fdd);
+    border: 2px solid var(--red);
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .ineligible-box h3 {
+    color: var(--red);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+
+  .ineligible-box p { color: #7a1a1a; font-size: 0.88rem; line-height: 1.6; }
+
+  /* COURSES */
+  .courses-header {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .courses-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .school-group {
+    margin-bottom: 20px;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .school-name {
+    background: linear-gradient(135deg, var(--green), var(--mid));
+    color: white;
+    padding: 12px 18px;
+    font-size: 0.73rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .course-list { background: white; }
+
+  .course-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    border-bottom: 1px solid #f0f5f2;
+    transition: background 0.15s;
+  }
+
+  .course-item:last-child { border-bottom: none; }
+  .course-item:hover { background: var(--surface); }
+
+  .course-info { flex: 1; }
+  .course-name { font-weight: 600; font-size: 0.88rem; color: var(--text); }
+  .course-code { font-size: 0.7rem; color: var(--muted); font-family: 'Space Mono', monospace; margin-top: 2px; }
+
+  .course-cutoff {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 100px;
+    white-space: nowrap;
+    margin-left: 12px;
+  }
+
+  .match-exact { background: #d4f5e4; color: #006B3F; }
+  .match-close { background: #dff2ec; color: #007a50; }
+  .match-above { background: #fef9e4; color: #a07800; }
+  .match-below { background: #fde8e8; color: #c0392b; }
+
+  .match-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 100px;
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+
+  .badge-exact { background: #006B3F; color: white; }
+  .badge-close { background: #00A05A; color: white; }
+  .badge-above { background: var(--gold); color: white; }
+  .badge-below { background: #e74c3c; color: white; }
+
+  /* FILTER TABS */
+  .filter-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .filter-tab {
+    padding: 7px 16px;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid var(--border);
+    background: white;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .filter-tab.active {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  /* RESET */
+  .reset-btn {
+    width: 100%;
+    background: transparent;
+    color: var(--muted);
+    border: 2px solid var(--border);
+    padding: 14px;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 12px;
+  }
+
+  .reset-btn:hover { border-color: var(--green); color: var(--green); }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 32px 0 20px;
+    color: rgba(255,255,255,0.35);
+    font-size: 0.75rem;
+    line-height: 1.8;
+  }
+
+  /* WA BOTTOM */
+  .wa-bottom {
+    background: linear-gradient(135deg, rgba(37,211,102,0.12), rgba(18,140,126,0.12));
+    border: 2px solid rgba(37,211,102,0.3);
+    border-radius: 16px;
+    padding: 20px 24px;
+    text-align: center;
+    margin: 24px 0;
+  }
+
+  .wa-bottom p {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.82rem;
+    margin-bottom: 12px;
+  }
+
+  .wa-bottom a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    text-decoration: none;
+    padding: 12px 28px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    box-shadow: 0 6px 20px rgba(37,211,102,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .wa-bottom a:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(37,211,102,0.45); }
+
+  /* PULSE ANIMATION */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .loading { animation: pulse 1.2s ease infinite; }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 22px 0;
+  }
+
+  /* NO COURSES */
+  .no-courses {
+    text-align: center;
+    padding: 32px;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  @media (max-width: 540px) {
+    .card-body { padding: 18px; }
+    .olevel-grid { grid-template-columns: 1fr 1fr; }
+    .score-number { font-size: 3.5rem; }
+    .score-breakdown { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- WhatsApp Top Banner -->
+<div class="wa-banner">
+  <p>🎓 Join this group for more updates on FUTA admission process</p>
+  <div>
+    <a href="https://chat.whatsapp.com/ED1tSKoImSe2lpCLcgd3gQ?mode=gi_t" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.554 4.122 1.523 5.858L0 24l6.335-1.499A11.934 11.934 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.908 0-3.7-.498-5.254-1.371L3 22l1.395-4.637A9.951 9.951 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      Join WhatsApp Group
+    </a>
+  </div>
+</div>
+
+<div class="wrapper">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-badge">🎓 FUTA · 2024/2025 Admission</div>
+    <h1>FUTA Screening<br><span>Point Calculator</span></h1>
+    <div class="header-sub">by SHEBA — Your Accurate Aggregate Score Tool</div>
+    <div class="contact-bar">
+      <div class="contact-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.7A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.14a16 16 0 006.95 6.95l1.41-1.41a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        +2347038489744
+      </div>
+      <div class="contact-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        oluwatimileyinsml@gmail.com
+      </div>
+    </div>
+  </div>
+
+  <!-- UTME Score Card -->
+  <div class="card" style="animation-delay:0.1s">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      </div>
+      <div>
+        <h2>UTME Score</h2>
+        <p>Enter your JAMB score out of 400</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="utme-row">
+        <label for="utme">UTME Score</label>
+        <input type="number" id="utme" placeholder="e.g. 270" min="0" max="400" oninput="validateUtme(this)">
+      </div>
+      <div class="utme-max">Maximum score: 400 points</div>
+    </div>
+  </div>
+
+  <!-- O'Level Card -->
+  <div class="card" style="animation-delay:0.2s">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <div>
+        <h2>O'Level Results</h2>
+        <p>Select grades for your 5 core subjects</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="olevel-grid" id="olevelGrid">
+        <!-- Dynamically rendered -->
+      </div>
+      <div class="warning-box">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d4a017" stroke-width="2.5" flex-shrink="0" style="flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <p><strong>Important:</strong> Any grade below C6 (D7, E8, F9) in any of your five core subjects will disqualify you from screening. Only credits count!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calculate Button -->
+  <button class="calc-btn" onclick="calculate()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+    Calculate My Aggregate Score
+  </button>
+
+  <!-- Results Section -->
+  <div class="result-section" id="resultSection">
+
+    <div id="ineligibleBox" class="ineligible-box" style="display:none">
+      <h3>⚠️ Not Eligible for Screening</h3>
+      <p>You have a failing grade (D7, E8, or F9) in one or more of your subjects. FUTA requires at least a C6 (credit) in all five core subjects for screening. Please check your results.</p>
+    </div>
+
+    <div id="scoreDisplay" class="score-display">
+      <div class="score-label">Your Aggregate Score</div>
+      <div class="score-number" id="aggregateNum">—</div>
+      <div class="score-percent">out of 100%</div>
+      <div class="score-breakdown">
+        <div class="breakdown-item">
+          <div class="b-label">UTME (75%)</div>
+          <div class="b-val" id="utmeScore">—</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="b-label">O'Level (25%)</div>
+          <div class="b-val" id="olevelScore">—</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="b-label">O'Level Average</div>
+          <div class="b-val" id="olevelAvg">—</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="b-label">Total UTME</div>
+          <div class="b-val" id="utmeRaw">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Course Suggestions -->
+    <div class="card" id="coursesCard" style="animation-delay:0s">
+      <div class="card-header">
+        <div class="card-header-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div>
+          <h2>Course Suggestions</h2>
+          <p>Based on your aggregate score</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="filterCourses('all', this)">All Courses</button>
+          <button class="filter-tab" onclick="filterCourses('eligible', this)">✅ Eligible</button>
+          <button class="filter-tab" onclick="filterCourses('close', this)">🎯 Very Close</button>
+          <button class="filter-tab" onclick="filterCourses('above', this)">⭐ Well Above</button>
+        </div>
+        <div id="courseResults"></div>
+      </div>
+    </div>
+
+    <button class="reset-btn" onclick="resetAll()">↩ Reset & Calculate Again</button>
+  </div>
+
+  <!-- WhatsApp Bottom Banner -->
+  <div class="wa-bottom">
+    <p>📢 Join this group for more updates on FUTA admission process, screening news, and results</p>
+    <a href="https://chat.whatsapp.com/ED1tSKoImSe2lpCLcgd3gQ?mode=gi_t" target="_blank">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.554 4.122 1.523 5.858L0 24l6.335-1.499A11.934 11.934 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.908 0-3.7-.498-5.254-1.371L3 22l1.395-4.637A9.951 9.951 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      Join WhatsApp Group
+    </a>
+  </div>
+
+  <div class="footer">
+    <div>FUTA Screening Point Calculator · Built by SHEBA</div>
+    <div>📞 +2347038489744 · ✉️ oluwatimileyinsml@gmail.com</div>
+    <div style="margin-top:8px;opacity:0.5">Cut-off marks based on last year's screening results. Subject to change.</div>
+  </div>
+
+</div>
+
+<script>
+const SUBJECTS = ["English Language", "Mathematics", "Subject 3", "Subject 4", "Subject 5"];
+const GRADES = [
+  { label: "A1 — Excellent (80)", val: 80, cls: "a1" },
+  { label: "B2 — Very Good (72)", val: 72, cls: "b2" },
+  { label: "B3 — Good (67)", val: 67, cls: "b3" },
+  { label: "C4 — Credit (62)", val: 62, cls: "c4" },
+  { label: "C5 — Credit (57)", val: 57, cls: "c5" },
+  { label: "C6 — Credit (52)", val: 52, cls: "c6" },
+  { label: "D7 — Pass (FAIL)", val: 0, cls: "fail" },
+  { label: "E8 — Pass (FAIL)", val: 0, cls: "fail" },
+  { label: "F9 — Fail (FAIL)", val: 0, cls: "fail" },
+];
+
+const SCHOOLS = [
+  {
+    name: "SCHOOL OF AGRICULTURE AND AGRICULTURAL TECHNOLOGY (SAAT)",
+    courses: [
+      { name: "Agricultural Extension And Communication Technology", code: "AEC", cutoff: 47.81 },
+      { name: "Agricultural Resources Economics", code: "ARE", cutoff: 47.50 },
+      { name: "Animal and Production Health", code: "APH", cutoff: 55.52 },
+      { name: "Crop Soil and Pest Management", code: "CSP", cutoff: 48.20 },
+      { name: "Ecotourism and Wildlife Management", code: "EWM", cutoff: 47.70 },
+      { name: "Fisheries and Aquaculture Technology", code: "FAT", cutoff: 47.50 },
+      { name: "Food Science and Technology", code: "FST", cutoff: 58.12 },
+      { name: "Forestry Wood and Technology", code: "FWT", cutoff: 47.50 },
+      { name: "Nutrition and Dietetics", code: "NTD", cutoff: 55.70 },
+    ]
+  },
+  {
+    name: "SCHOOL OF BASIC MEDICAL SCIENCES (SBMS)",
+    courses: [
+      { name: "Anatomy", code: "ANA", cutoff: 60.40 },
+      { name: "Biomedical Technology", code: "BIM", cutoff: 61.66 },
+      { name: "Medical Laboratory Science", code: "MLS", cutoff: 67.28 },
+      { name: "Medicine and Surgery", code: "MBBS", cutoff: 78.25 },
+      { name: "Physiology", code: "PHS", cutoff: 57.26 },
+    ]
+  },
+  {
+    name: "SCHOOL OF COMPUTING (SOC)",
+    courses: [
+      { name: "Computer Science", code: "CSC", cutoff: 69.12 },
+      { name: "Cyber Security", code: "CYS", cutoff: 63.75 },
+      { name: "Information System", code: "IFS", cutoff: 63.11 },
+      { name: "Information Technology", code: "IFT", cutoff: 64.23 },
+      { name: "Software Engineering", code: "SEN", cutoff: 65.38 },
+    ]
+  },
+  {
+    name: "SCHOOL OF ENGINEERING AND ENGINEERING TECHNOLOGY (SEET)",
+    courses: [
+      { name: "Agricultural Engineering", code: "AGE", cutoff: 56.21 },
+      { name: "Biomedical Engineering", code: "BME", cutoff: 63.40 },
+      { name: "Chemical Engineering", code: "CEE", cutoff: 65.21 },
+      { name: "Civil Engineering", code: "CVE", cutoff: 72.66 },
+      { name: "Computer Engineering", code: "CPE", cutoff: 69.62 },
+      { name: "Electrical/Electronics Engineering", code: "EEE", cutoff: 74.37 },
+      { name: "Industrial and Production Engineering", code: "IPE", cutoff: 53.53 },
+      { name: "Information and Communication Engineering", code: "ICE", cutoff: 54.60 },
+      { name: "Mechanical Engineering", code: "MEE", cutoff: 73.75 },
+      { name: "Mechatronics Engineering", code: "MCE", cutoff: 71.30 },
+      { name: "Mining Engineering", code: "MNE", cutoff: 55.20 },
+      { name: "Metallurgical Engineering", code: "MME", cutoff: 55.30 },
+    ]
+  },
+  {
+    name: "SCHOOL OF EARTH AND MINERAL SCIENCE (SEMS)",
+    courses: [
+      { name: "Applied Geology", code: "AGY", cutoff: 57.30 },
+      { name: "Applied Geophysics", code: "AGP", cutoff: 56.66 },
+      { name: "Marine Science and Technology", code: "MST", cutoff: 51.44 },
+      { name: "Metrology and Climate Science", code: "MCS", cutoff: 51.70 },
+      { name: "Remote Sensing and Geoinformatics", code: "RSG", cutoff: 51.10 },
+    ]
+  },
+  {
+    name: "SCHOOL OF ENVIRONMENTAL TECHNOLOGY (SET)",
+    courses: [
+      { name: "Architecture", code: "ARC", cutoff: 72.90 },
+      { name: "Building Technology", code: "BDG", cutoff: 57.20 },
+      { name: "Estate Management", code: "ESM", cutoff: 48.30 },
+      { name: "Industrial Design", code: "IDD", cutoff: 53.25 },
+      { name: "Quantity Survey", code: "QSV", cutoff: 57.60 },
+      { name: "Survey and Geo-informatics", code: "SVG", cutoff: 64.25 },
+      { name: "Textile Design Technology", code: "TDT", cutoff: 52.87 },
+      { name: "Urban and Regional Planning", code: "URP", cutoff: 52.90 },
+    ]
+  },
+  {
+    name: "SCHOOL OF LOGISTICS AND INNOVATION TECHNOLOGY (SLIT)",
+    courses: [
+      { name: "Entrepreneurship Management Technology", code: "ENT", cutoff: 51.66 },
+      { name: "Logistics and Transport Technology", code: "LTT", cutoff: 55.60 },
+      { name: "Project Management Technology", code: "PMT", cutoff: 56.40 },
+      { name: "Security & Investment Management Technology", code: "SIMT", cutoff: 49.50 },
+    ]
+  },
+  {
+    name: "SCHOOL OF LIFE SCIENCES (SLS)",
+    courses: [
+      { name: "Biochemistry", code: "BCH", cutoff: 64.33 },
+      { name: "Biology", code: "BIO", cutoff: 52.62 },
+      { name: "Biotechnology", code: "BTH", cutoff: 58.43 },
+      { name: "Microbiology", code: "MCB", cutoff: 64.30 },
+    ]
+  },
+  {
+    name: "SCHOOL OF PHYSICAL SCIENCES (SPS)",
+    courses: [
+      { name: "Chemistry", code: "CHM", cutoff: 55.30 },
+      { name: "Education Technology", code: "EDT", cutoff: 48.72 },
+      { name: "Library and Information Science", code: "LIS", cutoff: 48.90 },
+      { name: "Mathematics", code: "MTS", cutoff: 59.64 },
+      { name: "Physics Electronics", code: "PHY-E", cutoff: 50.70 },
+      { name: "Physics Energy", code: "PHY-EN", cutoff: 50.70 },
+      { name: "Statistics", code: "STA", cutoff: 50.00 },
+    ]
+  },
+];
+
+let currentAggregate = null;
+let currentFilter = 'all';
+
+// Build O'Level grid
+function buildOlevelGrid() {
+  const grid = document.getElementById('olevelGrid');
+  grid.innerHTML = '';
+  SUBJECTS.forEach((subj, i) => {
+    const div = document.createElement('div');
+    div.className = 'subject-card';
+    div.innerHTML = `
+      <label>${subj}</label>
+      <select id="subj_${i}" onchange="updatePill(${i})">
+        <option value="">— Select Grade —</option>
+        ${GRADES.map(g => `<option value="${g.val}" data-cls="${g.cls}">${g.label}</option>`).join('')}
+      </select>
+      <span class="grade-pill" id="pill_${i}">Not Set</span>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function updatePill(idx) {
+  const sel = document.getElementById(`subj_${idx}`);
+  const pill = document.getElementById(`pill_${idx}`);
+  const opt = sel.options[sel.selectedIndex];
+  if (!opt.value) {
+    pill.textContent = 'Not Set';
+    pill.className = 'grade-pill';
+    return;
+  }
+  const cls = opt.getAttribute('data-cls');
+  const txt = opt.text.split('—')[0].trim();
+  pill.textContent = txt + ' · ' + (cls === 'fail' ? 'FAIL' : opt.value);
+  pill.className = `grade-pill ${cls}`;
+}
+
+function validateUtme(el) {
+  if (el.value > 400) el.value = 400;
+  if (el.value < 0) el.value = 0;
+}
+
+function calculate() {
+  const utme = parseFloat(document.getElementById('utme').value);
+  if (isNaN(utme) || utme < 0 || utme > 400) {
+    alert('Please enter a valid UTME score between 0 and 400.');
+    return;
+  }
+
+  const grades = [];
+  let hasFail = false;
+  for (let i = 0; i < 5; i++) {
+    const sel = document.getElementById(`subj_${i}`);
+    if (!sel.value) {
+      alert(`Please select a grade for ${SUBJECTS[i]}.`);
+      return;
+    }
+    const v = parseFloat(sel.value);
+    if (v === 0) hasFail = true;
+    grades.push(v);
+  }
+
+  const resultSection = document.getElementById('resultSection');
+  const ineligibleBox = document.getElementById('ineligibleBox');
+  const scoreDisplay = document.getElementById('scoreDisplay');
+  resultSection.classList.add('visible');
+  resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  if (hasFail) {
+    ineligibleBox.style.display = 'block';
+    scoreDisplay.style.display = 'none';
+    document.getElementById('coursesCard').style.display = 'none';
+    return;
+  }
+
+  ineligibleBox.style.display = 'none';
+  scoreDisplay.style.display = 'block';
+  document.getElementById('coursesCard').style.display = 'block';
+
+  const utmeComponent = (utme / 400) * 75;
+  const olevelSum = grades.reduce((a, b) => a + b, 0);
+  const olevelAvg = olevelSum / 5;
+  const olevelComponent = (olevelAvg / 100) * 25;
+  const aggregate = utmeComponent + olevelComponent;
+
+  currentAggregate = aggregate;
+
+  document.getElementById('aggregateNum').textContent = aggregate.toFixed(2);
+  document.getElementById('utmeScore').textContent = utmeComponent.toFixed(3);
+  document.getElementById('olevelScore').textContent = olevelComponent.toFixed(3);
+  document.getElementById('olevelAvg').textContent = (olevelSum + '/5 = ' + olevelAvg.toFixed(1));
+  document.getElementById('utmeRaw').textContent = utme + ' / 400';
+
+  renderCourses('all');
+}
+
+function getMatchType(aggregate, cutoff) {
+  const diff = aggregate - cutoff;
+  if (diff >= 0 && diff <= 2) return 'exact';
+  if (diff > 2 && diff <= 8) return 'above';
+  if (diff > 8) return 'above';
+  if (diff < 0 && diff >= -4) return 'close';
+  return 'below';
+}
+
+function filterCourses(type, btn) {
+  currentFilter = type;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderCourses(type);
+}
+
+function renderCourses(filter) {
+  const container = document.getElementById('courseResults');
+  container.innerHTML = '';
+  const agg = currentAggregate;
+
+  let totalShown = 0;
+
+  SCHOOLS.forEach(school => {
+    let filteredCourses = school.courses.filter(c => {
+      const match = getMatchType(agg, c.cutoff);
+      if (filter === 'all') return true;
+      if (filter === 'eligible') return agg >= c.cutoff;
+      if (filter === 'close') return match === 'close';
+      if (filter === 'above') return match === 'above' || match === 'exact';
+      return true;
+    });
+
+    if (filteredCourses.length === 0) return;
+    totalShown += filteredCourses.length;
+
+    // Sort: eligible first, then by how close
+    filteredCourses.sort((a, b) => {
+      const da = Math.abs(agg - a.cutoff);
+      const db = Math.abs(agg - b.cutoff);
+      const ea = agg >= a.cutoff ? -1000 : 0;
+      const eb = agg >= b.cutoff ? -1000 : 0;
+      return (ea + da) - (eb + db);
+    });
+
+    const group = document.createElement('div');
+    group.className = 'school-group';
+    group.innerHTML = `<div class="school-name">${school.name}</div><div class="course-list"></div>`;
+    const list = group.querySelector('.course-list');
+
+    filteredCourses.forEach(course => {
+      const match = getMatchType(agg, course.cutoff);
+      const eligible = agg >= course.cutoff;
+      const diff = agg - course.cutoff;
+
+      let matchClass, badgeClass, badgeText;
+      if (eligible && Math.abs(diff) <= 2) {
+        matchClass = 'match-exact'; badgeClass = 'badge-exact'; badgeText = '✓ Match';
+      } else if (eligible && diff <= 8) {
+        matchClass = 'match-close'; badgeClass = 'badge-close'; badgeText = '✓ Eligible';
+      } else if (eligible) {
+        matchClass = 'match-above'; badgeClass = 'badge-above'; badgeText = '⭐ Above';
+      } else if (!eligible && diff >= -4) {
+        matchClass = 'match-close'; badgeClass = 'badge-close'; badgeText = '~ Close';
+      } else {
+        matchClass = 'match-below'; badgeClass = 'badge-below'; badgeText = '✗ Below';
+      }
+
+      const item = document.createElement('div');
+      item.className = 'course-item';
+      item.innerHTML = `
+        <div class="course-info">
+          <div class="course-name">${course.name}</div>
+          <div class="course-code">${course.code} · Cut-off: ${course.cutoff}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
+          <span class="course-cutoff ${matchClass}">${course.cutoff}</span>
+          <span class="match-badge ${badgeClass}">${badgeText}</span>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+
+    container.appendChild(group);
+  });
+
+  if (totalShown === 0) {
+    container.innerHTML = `<div class="no-courses">No courses match this filter. Try "All Courses" for a complete view.</div>`;
+  }
+}
+
+function resetAll() {
+  document.getElementById('utme').value = '';
+  for (let i = 0; i < 5; i++) {
+    document.getElementById(`subj_${i}`).value = '';
+    updatePill(i);
+  }
+  document.getElementById('resultSection').classList.remove('visible');
+  currentAggregate = null;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Init
+buildOlevelGrid();
+</script>
+</body>
+</html>
